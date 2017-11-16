@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="zh-cmn-Hans">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <script src="https://cdn.bootcss.com/jquery/2.2.4/jquery.js"></script>
+
+    <title>木桶布局</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            font-size: 0;
+        }
+
+        .img-ct {
+            width: 980px;
+            margin: 10px auto;
+        }
+
+        .img-box {
+            float: left;
+        }
+    </style>
+</head>
+<body>
+<div class="img-ct"></div>
+
+<script>
+    function Barrels($ct) {
+        this.$ct = $ct
+        this.imgNum = 40
+        this.baseHeight = 150
+        this.rowList = []
+        this.loadImg()
+
+    }
+
+    Barrels.prototype = {
+        loadImg: function () {
+            var _this = this
+            var imgUrls = this.getImgUrls(_this.imgNum)
+            $.each(imgUrls, function (idx, url) {
+                var img = new Image()
+                img.src = url
+                img.onload = function () {
+                    var originWidth = img.width
+                    var originHeight = img.height
+                    var ratio = originWidth / originHeight
+
+                    var imgInfo = {
+                        target: $(this),
+                        width: _this.baseHeight * ratio,
+                        height: _this.baseHeight,
+                        ratio: ratio
+                    }
+                    _this.render(imgInfo)
+                }
+            })
+        },
+        render: function (imgInfo) {
+            var _this = this
+            var rowList = this.rowList
+            var rowWidth = 0
+            var rowHeight = 0
+            var ctWidth = this.$ct.width()
+            var lastImgInfo = imgInfo
+
+            this.rowList.push(imgInfo)
+
+            $.each(rowList, function (idx, imgInfo) {
+                rowWidth += imgInfo.width
+                if (rowWidth > ctWidth) {
+                    rowList.pop()
+                    rowWidth -= lastImgInfo.width
+                    rowHeight = (ctWidth / rowWidth) * _this.baseHeight
+
+                    _this.createRow(rowHeight)
+                    _this.rowList = []
+                    _this.rowList.push(lastImgInfo)
+                }
+            })
+        },
+        createRow: function (rowHeight) {
+            var $imgCt = $('<div class="img-box"></div>')
+            $.each(this.rowList, function (idx, imgInfo) {
+                var $img = imgInfo.target
+                $img.height(rowHeight)
+                $imgCt.append($img)
+            })
+            this.$ct.append($imgCt)
+
+
+        },
+        getImgUrls: function (num) {
+            var color, width, height, urls = []
+            for (var i = 0; i < num; i++) {
+                color = Math.random().toString(16).substring(2, 8)
+                width = Math.floor(Math.random() * 100 + 50)
+                height = Math.floor(Math.random() * 30 + 50)
+                urls.push('http://placehold.it/' + width + 'x' + height + '/' + color + '/fff')
+            }
+            return urls
+        }
+
+    }
+
+    var barrels = new Barrels($('.img-ct'))
+</script>
+</body>
+</html>

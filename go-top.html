@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>JS Bin</title>
+    <style>
+        .ct {
+            height: 1000px;
+            background-color: yellow;
+        }
+        .go-top {
+            position: fixed;
+            top: 50px;
+            right: 30px;
+            padding: 10px;
+            border: 1px solid;
+            width: 44px;
+            text-align: center;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<div class="ct">
+    <h3>这里是顶部</h3>
+    <!-- <div class="go-top">返回顶部</div> -->
+</div>
+
+<script>
+    function GoTop(ct){
+        this.ct = ct
+        this.target = this.createNode(this.ct)
+        this.bindEvent(this.target)
+    }
+    GoTop.prototype = {
+        createNode: function(box){
+            var node = document.createElement('div')
+            node.classList.add('go-top')
+            node.innerText = '返回顶部'
+            box.appendChild(node)
+
+            return node
+        },
+        bindEvent: function (e) {
+            console.log(e)
+            e.addEventListener('click', function () {
+                window.scroll(0, 0)
+            })
+        }
+    }
+    var ct = document.querySelector('.ct')
+    var goTop = new GoTop(ct)
+</script>
+</body>
+
+</html>
